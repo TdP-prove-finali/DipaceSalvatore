@@ -1,0 +1,83 @@
+\documentclass[a4paper,12pt]{toptesi}
+\usepackage[ansinew]{inputenc}
+%\usepackage[utf8]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+%\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{listings, xcolor}
+\lstset{
+tabsize = 4, %% set tab space width
+showstringspaces = false, %% prevent space marking in strings, string is defined as the text that is generally printed directly to the console
+numbers = left, %% display line numbers on the left
+commentstyle = \color{green}, %% set comment color
+keywordstyle = \color{blue}, %% set keyword color
+stringstyle = \color{red}, %% set string color
+rulecolor = \color{black}, %% set frame color to avoid being affected by text color
+basicstyle = \small \ttfamily , %% set listing font and size
+breaklines = true, %% enable line breaking
+numberstyle = \tiny,
+}
+
+\begin{document}
+
+\NomeMonografia{}
+\monografia{Prova Finale \\ Gestione Magazzino Lego}
+\ateneo{Politecnico di Torino}
+\logosede{logo/LogoPoliTo.eps}
+\corsodilaurea{Ingegneria Gestionale Classe L8}
+%\relatore{prof.\ Fulvio Corno}
+\sedutadilaurea{Dicembre 2020}
+\candidato{Relatore prof. Fulvio Corno \\ Candidato Salvatore Dipace}
+
+\frontespizio
+
+\tableofcontents
+
+\chapter*{Proposta progetto}
+\addcontentsline{toc}{chapter}{Proposta Progetto}
+\input{proposta_progetto/proposta_progetto}
+
+\chapter*{Problema affrontato}
+\addcontentsline{toc}{chapter}{Problema affrontato}
+\input{problema_affrontato/problema_affrontato}
+
+\chapter*{Descrizione del data-set utilizzato per l'analisi}
+\addcontentsline{toc}{chapter}{Descrizione del data-set}
+\input{data_set/data_set}
+
+\chapter*{Descrizione delle strutture dati e degli algoritmi utilizzati}
+\addcontentsline{toc}{chapter}{Descrizione delle strutture dati e degli algoritmi}
+\input{desc_strutture_dati_algoritmi/desc_strutture_dati_algoritmi}
+
+\chapter*{Diagramma delle classi delle parti principali}
+\addcontentsline{toc}{chapter}{Diagramma delle classi}
+\input{diagramma_classi/diagramma_classi}
+
+\chapter*{Interfaccia grafica}
+\addcontentsline{toc}{chapter}{Interfaccia grafica}
+\input{interfaccia_grafica/interfaccia_grafica}
+
+\chapter*{Risultati sperimentali}
+\addcontentsline{toc}{chapter}{Risultati sperimentali}
+\input{risultati_sperimentali/risultati_sperimentali}
+
+\chapter*{Conclusioni}
+\addcontentsline{toc}{chapter}{Conclusioni}
+\input{conclusioni/conclusioni}
+
+
+
+\vfill
+\begin{center}
+\includegraphics{logo/licenza.eps}
+\end{center}
+\tiny{Quest'opera è distribuita con Licenza \url{http://creativecommons.org/licenses/by-nc-sa/2.5/it/} Creative Commons Attribuzione - Non commerciale - Condividi allo stesso modo 2.5 Italia}
+
+
+
+\end{document}

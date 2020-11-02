@@ -1,0 +1,34 @@
+L'applicazione proposta è un semplice prototipo di strumento che i collezionisti del gioco LEGO potrebbero utilizzare per poter valutare le potenzialità dei pezzi a disposizione in un ipotetico magazzino. I problemi affrontati sono due:
+\begin{enumerate}
+	\item quali set si possono costruire (interamente o parzialmente) con i pezzi a disposizione;
+  \item stabilito un obiettivo espresso attraverso un insieme di set che si vorrebbe costruire, capire 
+\begin{itemize}
+	\item quali e quanti pezzi mancano in magazzino;
+	\item quali set conviene acquistare per colmare il gap.
+\end{itemize}
+\end{enumerate}
+
+Per il primo problema l'utente può scegliere una o più serie di interesse. Scelta una percentuale di completamento del set, si mostrano a video le combinazioni possibili con il numero più alto di set.
+Più la percentuale si abbassa, più alta sarà l'insieme dei set costruibili.
+Si utilizza l'algoritmo della ricorsione in quanto si tratta di un caso di studio simile al problema dello zaino.
+
+Il secondo problema è affrontato per passi successivi:
+\begin{itemize}
+	\item scelta delle serie da analizzare
+	\item creazione di un grafo pesato non orientato con le seguenti caratteristiche:
+\begin{itemize}
+	\item i nodi sono costituiti dai set
+	\item esiste un arco tra due nodi solo se il coefficiente di accoppiamento tra i due set 
+	rappresentati dai nodi è superiore a una soglia scelta da interfaccia. Il coefficiente corrisponderà al peso dell'arco. 
+\end{itemize}
+	Il coefficiente di accoppiamento x tra il nodo A e quello B è definito come
+\begin{equation*}
+\text{x}= \frac{\left(\text{numero pezzi in comune}\right)^{2}}{\left( \text{numero pezzi set A} \right) \left( \text{numero pezzi set B} \right)}
+\end{equation*}
+
+	\item si sceglie un set tra quelli del grafo e si mostra l'albero di visita
+	\item si calcola la lista di pezzi mancanti in magazzino per poter costruire i set che compongono l'albero di visita
+	\item si calcola l'insieme più piccolo di set che conviene acquistare per colmare il gap in base a una percentuale di completamento scelta da interfaccia. Questo perché l'utente potrebbe decidere di coprire parte del gap acquistando pezzi sfusi secondo considerazioni economiche.
+\end{itemize}
+
+L'interfaccia, senz'altro migliorabile, cerca di guidare le scelte dell'utente attivando i bottoni delle varie funzionalità solo quando si sono completati i passi precedenti.

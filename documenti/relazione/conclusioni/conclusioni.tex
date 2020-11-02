@@ -1,0 +1,21 @@
+
+La complessità della base dati considerata in termini di numero di tabelle presenti e volume dei dati influisce molto sui tempi di esecuzione delle operazioni implementate.
+Gli sviluppi sono stati quindi svolti utilizzando una classe DAO di test con pochi dati e semplici. Solo dopo aver verificato il corretto funzionamento degli algoritmi si è passati a lavorare sulla base dati vera.
+
+Tra i punti di debolezza dell'applicazione si indica un'interfaccia grafica che deve essere migliorata dal punto di vista dell'usabilità. Per esempio
+\begin {itemize}
+\item si dovrebbe poter scegliere un insieme di set non necessariamente collegati alla stessa serie;
+\item manca la funzionalità per poter aggiungere in magazzino pezzi acquistati singolarmente.
+\end {itemize}
+
+Senz'altro alcune parti del codice possono essere migliorate e ottimizzate. In molti punti si devono confrontare tra loro collezioni di oggetti con dimensioni non trascurabili. Un refactoring potrebbe influire sui tempi di esecuzione.
+
+Alcuni risultati non totalmente corretti derivano da 
+\begin {itemize}
+	\item aver considerato solo i pezzi necessari per la costruzione del set e non anche quelli di riserva (attributo \texttt{is\_spare} della tabella \texttt{inventory\_parts})
+\item non aver tenuto conto delle minifigure (tabelle \texttt{minifigs} e \\ \texttt{inventory\_minifigs})
+\item in alcuni casi il numero di pezzi dichiarato nella tabella dei set (attributo \texttt{num\_parts}) non sempre corrisponde ai pezzi collegati al set nella tabella \texttt{inventory\_parts}. Quindi si è preferito calcolarlo ogni volta piuttosto che affidarsi a questa informazione
+\end {itemize}
+
+Infine un punto importante che potrebbe rappresentare un'importante miglioramento delle indicazioni ottenute dall'applicazione consiste nel assegnare un valore/peso a ogni pezzo. La base dati non fornisce informazioni a riguardo e quindi un semplice mattoncino 1x1 ha il valore di una ruota o di un motorino per un modello di veicolo. 
+Se ci fossero queste informazioni, non sarebbero necessari molti interventi sul codice in quanto già ora per esempio la ricorsione è adatta a risolvere il problema dello zaino (rappresentato o dal magazzino oppure dal gap di pezzi che si vuole colmare).

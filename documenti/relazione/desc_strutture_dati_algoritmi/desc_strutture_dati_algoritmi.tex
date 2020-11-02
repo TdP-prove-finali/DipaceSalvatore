@@ -1,0 +1,244 @@
+L'applicazione è stata sviluppata seguendo il pattern MVC. Di seguito si descriveranno le strutture dati utilizzate e gli algoritmi implementati.
+
+\section{Organizzazione delle classi}
+
+Il package \texttt{model} contiene la classe Model che espone i metodi per il Controller. Per una più semplice leggibilità e manutenzione del codice, si sono creati più package interni:
+\begin{itemize}
+\item \texttt{bean}: ospita tutte le classi che modellano gli oggetti;
+\item \texttt{exception}: raccoglie le eccezioni. Si  è lavorato con una sola eccezione generica, ma se ne potrebbero creare diverse per ogni situazione specifica.  
+\item \texttt{ricorsione}: qui si trovano le classi che si occupano di risolvere i problemi con l'algortimo della ricorsione. Sono due perché l'algoritmo di ricorsione seguito per il problema di come colmare il gap del magazzino è leggermente diversa. Si è sviluppata anche una classe di test
+\item \texttt{graph}: contiene la classe che  espone i metodi per creare il grafo e le relative visite. E' accompagnata da una classe di test
+\end{itemize}
+Infine c'è il package \texttt{db} con la classe DAO e quelle di test e utility.
+
+\section{Ricorsione}
+
+L'algoritmo di ricorsione è stato utilizzato per trovare le sequenze più lunghe di set costruibili con il magazzino a disposizione e per determinare l'insieme più piccolo di set da acquistare per colmare il gap del magazzino, per raggiungere un determinato obiettivo.
+
+\subsection{Ricorsione per l'analisi delle potenzialità del magazzino}
+
+La soluzione parziale è rappresentata da una lista di Set. E' una soluzione valida del problema se non sono state trovate fino a quel momento liste di Set con dimensione maggiore o equivalenti.  Due liste di set sono equivalenti se hanno stessa dimensione e contengono gli stessi set anche in ordine diverso. Ci possono essere più soluzioni valide: quindi la struttura dati considerata sarà una lista di liste di Set.
+Il codice dell'algoritmo implementato è il seguente
+
+\begin{lstlisting}[language = Java , frame = trBL  , escapeinside={(*@}{@*)}]
+	protected void scegli(List<Set> parziale, List<List<Set>> best, int percentualeCompletamento) {
+
+		if (!parziale.isEmpty() && parziale
+				.size() >= ((best == null || best.isEmpty() || best.get(0) == null) ? 0 : best.get(0).size())) {
+			// trovato soluzione migliore
+
+			if (parziale.size() > ((best == null || best.isEmpty() || best.get(0) == null) ? 0 : best.get(0).size())) {
+				best.clear();
+			}
+
+			if (!areSoluzioniEquivalenti(parziale, best)) {
+				java.util.List<Set> temp = new ArrayList<Set>();
+				temp.addAll(parziale);
+				best.add(temp);
+			}
+
+		}
+
+		for (Set s : getSets()) {
+			if (!parziale.contains(s)) {
+				// il set non c'è ancora in parziale e provo ad aggiungerlo
+				if (areThePartsToBuildTheSetWithTheRequiredPercentageInStock(s, percentualeCompletamento)) {
+					//nuova soluzione parziale
+					parziale.add(s);
+					updateMagazzino(s, "ADD");
+					// si delega la ricerca al livello successivo
+					scegli(parziale, best, percentualeCompletamento);
+					//backtracking
+					parziale.remove(s);
+					updateMagazzino(s, "REMOVE");
+				}
+
+			}
+
+		}
+
+	}
+
+\end{lstlisting}
+
+Quando si considera una nuova soluzione parziale si deve aggiornare il magazzino rimuovendo i pezzi che costituiscono il set scelto. In fase di backtracking si devono invece rimettere in magazzino i pezzi del set rimosso dalla soluzione parziale.
+
+\begin{lstlisting}[language = Java , frame = trBL  , escapeinside={(*@}{@*)}]
+protected void updateMagazzino(Set s, String operation) {
+		Map<String,Part> parts = s.getParts();
+
+		for (String keyPart : parts.keySet()) {
+			if (getMagazzino().containsKey(keyPart)) {
+				Part magazzinoPart = getMagazzino().get(keyPart);
+				if ("ADD".equals(operation)) {
+					magazzinoPart.decrementQuantity(parts.get(keyPart).getQuantity());
+				} else {
+					magazzinoPart.incrementQuantity(parts.get(keyPart).getQuantity());
+				}
+
+			}
+
+		}
+	}
+\end{lstlisting}
+
+La struttura dati utilizzata per rappresentare il magazzino è una mappa dove la chiave è l'identificativo del pezzo e il valore è l'oggetto pezzo. Per capire se una soluzione parziale è equivalente con una delle soluzioni in quel momento salvate come soluzioni definitive, si usa il metodo
+
+\begin{lstlisting}[language = Java , frame = trBL  , escapeinside={(*@}{@*)}]
+	protected boolean areSoluzioniEquivalenti(List<Set> parziale, List<List<Set>> best) {
+		if (parziale == null || parziale.isEmpty()) {
+			if (best == null || best.isEmpty()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		if (best == null || best.isEmpty()) {
+			if (parziale == null || parziale.isEmpty()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		if (best.get(0).size() != parziale.size()) {
+			return false;
+		}
+
+		for (List<Set> soluzione : best) {
+			/*
+			 * //to avoid messing the order of the lists we will use a copy
+			 */
+			List<Set> soluzioneTemp = new ArrayList<Set>(soluzione);
+			List<Set> parzialeTemp = new ArrayList<Set>(parziale);
+
+			Collections.sort(soluzioneTemp);
+			Collections.sort(parzialeTemp);
+
+			if (parzialeTemp.equals(soluzioneTemp)) {
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+\end{lstlisting}
+
+\newpage
+
+Un set può essere aggiunto nella soluzione parziale solo se in magazzino ci sono i pezzi necessari per costruirlo completamente o in parte in base alla percentuale scelta dall'utente. Il metodo implementato è il seguente
+\begin{lstlisting}[language = Java , frame = trBL  , escapeinside={(*@}{@*)}]
+	protected boolean areThePartsToBuildTheSetWithTheRequiredPercentageInStock(Set s, int requiredPercentage) {
+		Map<String, Part> parts = s.getParts();
+		Map<String, Part> magazzinoTemp = new HashMap<String, Part>();
+		magazzinoTemp.putAll(getMagazzino());
+
+		int availablePartsNumber = 0;
+		for (String keyPart : parts.keySet()) {
+
+			if (magazzinoTemp.containsKey(keyPart)) {
+				Part magazzinoPart = magazzinoTemp.get(keyPart);
+
+				if (magazzinoPart.getQuantity() < parts.get(keyPart).getQuantity()) {
+					availablePartsNumber += magazzinoPart.getQuantity();
+
+				} else {
+					availablePartsNumber += parts.get(keyPart).getQuantity();
+				}
+
+			}
+
+		}
+		int percentage = (availablePartsNumber * 100) / s.getPartsNumber();
+		return percentage >= requiredPercentage;
+
+	}
+\end{lstlisting}
+I metodi sono protetti e non privati per poter essere testati nella classe di test.
+
+\subsection{Ricorsione per l'analisi del gap}
+La logica è molto simile alla soluzione precedente. Non si riporta il codice, ma si elencano solo le differenze:
+\begin{itemize}
+\item la nuova soluzione parziale si genera rimuovendo un set e non aggiungendolo perché l'obiettivo è trovare l'insieme di set più piccolo che colma il gap con la percentuale scelta
+\item la nuova soluzione parziale è tale se permette di colmare la parte di gap impostata dall'utente. Se non lo è, il set non viene preso in considerazione e se ne rimuovo un altro
+\item in questo caso non deve essere aggiornato il magazzino perché questo è virtualmente costituito dalla soluzione parziale che si sta considerando in quel momento e che varia a seconda dei sei aggiunti e tolti.
+\end{itemize}
+
+
+
+
+\section{Grafo}
+Per analizzare gli accoppiamenti tra un insieme di set avendo evidenza di quelli con più pezzi in comune, si è costruito un grafo non orientato e pesato. L'arco tra due set esiste se l'accoppiamento tra loro è maggiore di una soglia scelta dall'utente. Per costruire il grafo si è sviluppato il metodo
+
+\begin{lstlisting}[language = Java , frame = trBL  , escapeinside={(*@}{@*)}]
+	public Graph<Set, DefaultEdge> creaGrafo(List<Theme> themes, double threshold) throws LegoException {
+
+		Graph<Set, DefaultEdge> graph;
+
+		List<Set> sets = init(themes);
+
+		graph = new SimpleWeightedGraph<Set, DefaultEdge>(DefaultEdge.class);
+		Graphs.addAllVertices(graph, sets);
+
+		// aggiungo un arco tra tutti i set, con peso x = coefficiente di accoppiamento
+		for (Set s1 : graph.vertexSet()) {
+			for (Set s2 : graph.vertexSet()) {
+				if (!s1.equals(s2)) {
+					Float accoppiamento = calcolaAccoppiamento(s1, s2);
+					if (accoppiamento * 100 >= threshold) {
+						Graphs.addEdgeWithVertices(graph, s1, s2, accoppiamento);
+					}
+				}
+			}
+		}
+
+		return graph;
+
+	}
+\end{lstlisting}
+mentre il calcolo del coefficiente di accoppiamento tra due set avviene con il metodo
+
+\begin{lstlisting}[language = Java , frame = trBL  , escapeinside={(*@}{@*)}]
+	private Float calcolaAccoppiamento(Set s1, Set s2) {
+
+		float coefficienteAccoppiamento;
+		// se uno dei due set non ha pezzi -->0
+		if (s1.getParts().isEmpty() || s1.getParts().isEmpty()) {
+			coefficienteAccoppiamento = 0;
+
+		} else {
+			int numeroPezziInComune = 0;
+			if (s1.getPartsNumber() >= s2.getPartsNumber()) {
+				for (String keyPart : s2.getParts().keySet()) {
+					if (s1.getParts().containsKey(keyPart)) {
+						if (s1.getParts().get(keyPart).getQuantity() >= s2.getParts().get(keyPart).getQuantity()) {
+							numeroPezziInComune += s2.getParts().get(keyPart).getQuantity();
+						} else {
+							numeroPezziInComune += s1.getParts().get(keyPart).getQuantity();
+						}
+					}
+				}
+
+			} else {
+				for (String keyPart : s1.getParts().keySet()) {
+					if (s2.getParts().containsKey(keyPart)) {
+						if (s2.getParts().get(keyPart).getQuantity() >= s1.getParts().get(keyPart).getQuantity()) {
+							numeroPezziInComune += s1.getParts().get(keyPart).getQuantity();
+						} else {
+							numeroPezziInComune += s2.getParts().get(keyPart).getQuantity();
+						}
+					}
+				}
+
+			}
+			coefficienteAccoppiamento = (float) (numeroPezziInComune * numeroPezziInComune)
+					/ ((s1.getPartsNumber() * s2.getPartsNumber()));
+		}
+
+		return coefficienteAccoppiamento;
+	}
+\end{lstlisting}
+
+ 	

@@ -14,7 +14,7 @@ import it.polito.tdp.gestione_magazzino_lego.model.exception.LegoException;
 
 public class DBConnect {
 
-	static private final String JDBC_URL = "jdbc:mysql://localhost/lego";
+	static private final String JDBC_URL = "jdbc:mysql://localhost/lego_prova_1";
 
 	
 	

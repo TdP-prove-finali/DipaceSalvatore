@@ -232,7 +232,7 @@ public class MagazzinoLegoController implements Initializable {
 
 		try {
 			getModel().updateMagazzino(set);
-			gmResult.appendText("Il set " + set.getName() + " Ã¨ stato caricato correttamente in magazzino\n");
+			gmResult.appendText("Il set " + set.getName() + " è stato caricato correttamente in magazzino\n");
 		} catch (LegoException e) {
 			gmResult.appendText("Errore nel caricamento nel magazzino per il set selezionato\n");
 			e.printStackTrace();
@@ -400,7 +400,7 @@ public class MagazzinoLegoController implements Initializable {
 		try {
 			List<List<Set>> solutions = getModel().risolviRicorsioneForGap(this.missingParts, this.gapAlberoSession, this.gapPercentualeGap.getValue());
 			if(solutions.isEmpty()) {
-				this.gapSetsForGapResult.appendText("Non Ã¨ possibile colmare il gap.\n");
+				this.gapSetsForGapResult.appendText("Non è possibile colmare il gap.\n");
 			}
 			
 			
@@ -410,7 +410,7 @@ public class MagazzinoLegoController implements Initializable {
 
 		
 		} catch (LegoException e) {
-			this.gapSetsForGapResult.appendText("Si Ã¨ verificato un errore nella determinazione dei set minimi che colmano il gap\n");
+			this.gapSetsForGapResult.appendText("Si è verificato un errore nella determinazione dei set minimi che colmano il gap\n");
 		}
 		
 		

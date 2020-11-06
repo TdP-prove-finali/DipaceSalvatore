@@ -5,9 +5,8 @@ Istruzioni per l'installazione e l'utilizzo dell'applicazione
 1 - Fork del progetto (https://github.com/TdP-prove-finali/DipaceSalvatore);
 
 2 - Caricare con HeidiSQL i file per la base dati nel seguente ordine
-	2.1	eseguire le istruzioni del file lego_v5.sql per creare le tabelle
-	2.2 eseguire le istruzioni del file themes.sql
-	2.3 importare i file .csv nel seguente ordine:
+	2.1	eseguire le istruzioni del file lego_v6.sql per creare le tabelle e poolare la tabella themes
+	2.2 per velocizzare le configurazioni importare i file .csv nel seguente ordine ignorando gli avvisi di errore:
 			colors.csv
 			part_categories.csv
 			minifigs.csv

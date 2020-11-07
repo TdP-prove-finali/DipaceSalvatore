@@ -19,6 +19,9 @@ Istruzioni per l'installazione e l'utilizzo dell'applicazione
 			inventory_minifigs.csv
 			inventory_sets.csv
 			
+     2.3 in alternativa lanciare le istruzioni del file lego_completo.sql
+    
+			
 3 - Cambiare l'utente e la password nella classe DBConnect
 
 4 - Eseguire la classe Main;
